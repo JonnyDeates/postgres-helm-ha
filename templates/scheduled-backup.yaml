@@ -1,0 +1,13 @@
+{{- if .Values.backup.enabled }}
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: {{ .Values.name }}-daily
+  namespace: {{ .Values.namespace }}
+spec:
+  # Cron schedule defined in values.yaml
+  schedule: {{ .Values.backup.schedule | quote }}
+  backupOwnerReference: self
+  cluster:
+    name: {{ .Values.name }}
+{{- end }}

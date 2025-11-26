@@ -1,0 +1,59 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: {{ .Values.name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  instances: {{ .Values.instances }}
+
+  # Automated Failover Logic
+  primaryUpdateStrategy: unsupervised
+
+  storage:
+    size: {{ .Values.storage.size }}
+    {{- if .Values.storage.storageClass }}
+    storageClass: {{ .Values.storage.storageClass }}
+    {{- end }}
+
+  bootstrap:
+    initdb:
+      database: app
+      owner: app_user
+      secret:
+        name: {{ .Values.name }}-app-user
+
+  superuserSecret:
+    name: {{ .Values.superuser.secretName }}
+
+  # --- Backup Logic Updated for MinIO ---
+  {{- if .Values.backup.enabled }}
+  backup:
+    barmanObjectStore:
+      destinationPath: s3://{{ .Values.backup.s3.bucket }}/{{ .Values.name }}
+
+      # Dynamically set protocol based on insecure flag
+      endpointURL: {{ if .Values.backup.s3.insecure }}http{{ else }}https{{ end }}://{{ .Values.backup.s3.endpoint }}
+
+      s3Credentials:
+        accessKeyId:
+          name: {{ .Values.name }}-s3-creds
+          key: ACCESS_KEY_ID
+        secretAccessKey:
+          name: {{ .Values.name }}-s3-creds
+          key: SECRET_ACCESS_KEY
+      wal:
+        compression: gzip
+  {{- end }}
+
+  affinity:
+    nodeAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 10
+          preference:
+            matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                  - node1
+                  - node2
+                  - node3

@@ -1,0 +1,46 @@
+# --- General Settings ---
+name: "home-db"
+namespace: "database"
+
+# --- High Availability ---
+# 3 instances: 1 Primary, 2 Replicas (Master-Slave)
+instances: 3
+
+# --- Storage ---
+storage:
+  size: "10Gi"
+  # storageClass: "local-path" # Uncomment if needed for your cluster
+
+# --- Security ---
+superuser:
+  secretName: "home-db-superuser"
+  user: "postgres"
+
+# --- Backups (Connected to your MinIO) ---
+backup:
+  enabled: true
+  retentionPolicy: "30d"
+  schedule: "0 2 * * *" # Daily at 2 AM
+
+  s3:
+    # Matches the default bucket behavior (Note: You may need to create this bucket manually in the MinIO UI first)
+    bucket: "my-postgres-backups"
+
+    # Internal DNS for the Service defined in minio-standalone.yaml
+    endpoint: "minio.storage.svc.cluster.local:9000"
+
+    # Matches 'rootUser' in minio-standalone.yaml
+    accessKey: "minio-admin"
+
+    # Matches 'rootPassword' in minio-standalone.yaml
+    secretKey: "CHANGE_ME_SECRET_KEY"
+
+    # Region usually defaults to us-east-1 for MinIO
+    region: "us-east-1"
+
+    # Must be true for internal cluster traffic without certs
+    insecure: true
+
+# --- Monitoring ---
+monitoring:
+  enablePodMonitor: false
