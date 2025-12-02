@@ -1,0 +1,27 @@
+stages: [package, publish]
+
+package:
+  stage: package
+  image: alpine/helm:3.15.2
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  script:
+    - helm package chart --destination dist
+  artifacts:
+    paths: [dist/]
+    when: always
+
+publish_oci:
+  stage: publish
+  image: alpine/helm:3.15.2
+  needs: [package]
+  rules:
+    - if: $CI_COMMIT_TAG
+  before_script:
+    - printf '%s' "$CI_REGISTRY_PASSWORD" | helm registry login "$CI_REGISTRY" -u "$CI_REGISTRY_USER" --password-stdin
+  script:
+    # Pick the tgz produced earlier (assumes one chart per repo)
+    - CHART_TGZ=$(ls -1 dist/*.tgz | head -n1)
+    - test -n "$CHART_TGZ"
+    - helm push "$CHART_TGZ" "oci://$CI_REGISTRY/$CI_PROJECT_PATH"
