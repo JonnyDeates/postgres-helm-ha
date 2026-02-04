@@ -20,11 +20,7 @@ superuser:
 backup:
   enabled: true
   retentionPolicy: "30d"
-  schedule: "0 2 * * *" # Daily at 2 AM
-
-  # Job history limits for scheduled backups
-  successfulJobsHistoryLimit: 20
-  failedJobsHistoryLimit: 20
+  schedule: "0 2 * * * *" # Daily at 2 AM
 
   # SSH Remote Backup (optional)
   ssh:
@@ -32,12 +28,15 @@ backup:
     # Example: ssh://user@hostname:port/path/to/backups
     destinationPath: ""
     endpointURL: ""
+    # Server name for Barman (defaults to cluster name if not specified)
+    serverName: ""
     # Optional: Secret containing SSH private key
     sshSecret: ""
     sshSecretKey: "id_rsa"
 
   # S3 Backup (optional - can be used with MinIO)
   s3:
+    enabled: true  # Set to false if you only want SSH backups
     # Matches the default bucket behavior (Note: You may need to create this bucket manually in the MinIO UI first)
     bucket: "my-postgres-backups"
 

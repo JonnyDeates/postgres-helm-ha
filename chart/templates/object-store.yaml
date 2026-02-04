@@ -1,0 +1,35 @@
+{{- if .Values.backup.enabled }}
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: {{ .Values.name }}-objectstore
+  namespace: {{ .Values.namespace }}
+spec:
+  configuration:
+    {{- if .Values.backup.ssh.enabled }}
+    # SSH Remote Backup Configuration
+    destinationPath: {{ .Values.backup.ssh.destinationPath }}
+    endpointURL: {{ .Values.backup.ssh.endpointURL }}
+    serverName: {{ .Values.backup.ssh.serverName | default .Values.name }}
+    {{- if .Values.backup.ssh.sshSecret }}
+    endpointCA:
+      name: {{ .Values.backup.ssh.sshSecret }}
+      key: {{ .Values.backup.ssh.sshSecretKey | default "id_rsa" }}
+    {{- end }}
+    {{- else if .Values.backup.s3.enabled }}
+    # S3 Backup Configuration
+    destinationPath: s3://{{ .Values.backup.s3.bucket }}/{{ .Values.name }}
+    endpointURL: {{ if .Values.backup.s3.insecure }}http{{ else }}https{{ end }}://{{ .Values.backup.s3.endpoint }}
+    s3Credentials:
+      accessKeyId:
+        name: {{ .Values.name }}-s3-creds
+        key: ACCESS_KEY_ID
+      secretAccessKey:
+        name: {{ .Values.name }}-s3-creds
+        key: SECRET_ACCESS_KEY
+    {{- end }}
+    wal:
+      compression: gzip
+  # Retention policy moved from Cluster to ObjectStore in plugin architecture
+  retentionPolicy: {{ .Values.backup.retentionPolicy | quote }}
+{{- end }}
