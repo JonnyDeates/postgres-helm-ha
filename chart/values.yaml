@@ -16,12 +16,27 @@ superuser:
   secretName: "home-db-superuser"
   user: "postgres"
 
-# --- Backups (Connected to your MinIO) ---
+# --- Backups ---
 backup:
   enabled: true
   retentionPolicy: "30d"
   schedule: "0 2 * * *" # Daily at 2 AM
 
+  # Job history limits for scheduled backups
+  successfulJobsHistoryLimit: 20
+  failedJobsHistoryLimit: 20
+
+  # SSH Remote Backup (optional)
+  ssh:
+    enabled: false
+    # Example: ssh://user@hostname:port/path/to/backups
+    destinationPath: ""
+    endpointURL: ""
+    # Optional: Secret containing SSH private key
+    sshSecret: ""
+    sshSecretKey: "id_rsa"
+
+  # S3 Backup (optional - can be used with MinIO)
   s3:
     # Matches the default bucket behavior (Note: You may need to create this bucket manually in the MinIO UI first)
     bucket: "my-postgres-backups"

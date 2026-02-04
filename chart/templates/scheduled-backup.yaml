@@ -10,4 +10,7 @@ spec:
   backupOwnerReference: self
   cluster:
     name: {{ .Values.name }}
+  # Job history limits
+  successfulJobsHistoryLimit: {{ .Values.backup.successfulJobsHistoryLimit | default 20 }}
+  failedJobsHistoryLimit: {{ .Values.backup.failedJobsHistoryLimit | default 20 }}
 {{- end }}
