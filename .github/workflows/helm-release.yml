@@ -105,16 +105,14 @@ jobs:
 
       - name: Package chart
         run: |
-          mkdir -p .helm-releases
-          helm package chart --destination .helm-releases
+          mkdir -p /tmp/helm-releases
+          helm package chart --destination /tmp/helm-releases
 
       - name: Checkout gh-pages branch
         run: |
           if git ls-remote --heads origin gh-pages | grep -q gh-pages; then
             git fetch origin gh-pages
             git checkout gh-pages
-            # Copy existing charts
-            cp -r .helm-releases/* . 2>/dev/null || true
           else
             git checkout --orphan gh-pages
             git rm -rf . 2>/dev/null || true
@@ -122,11 +120,15 @@ jobs:
 
       - name: Copy packaged charts
         run: |
-          cp .helm-releases/*.tgz . 2>/dev/null || true
+          cp /tmp/helm-releases/*.tgz .
 
       - name: Generate Helm repo index
         run: |
-          helm repo index . --url https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
+          if [ -f index.yaml ]; then
+            helm repo index . --url https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }} --merge index.yaml
+          else
+            helm repo index . --url https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
+          fi
 
       - name: Commit and push
         run: |
