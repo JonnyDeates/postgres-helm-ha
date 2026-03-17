@@ -3,7 +3,17 @@ entries:
   home-postgres-ha:
   - apiVersion: v2
     appVersion: "16.1"
-    created: "2026-03-17T18:30:11.419984314Z"
+    created: "2026-03-17T18:55:20.05067754Z"
+    description: A Helm chart for a High Availability PostgreSQL Cluster using CloudNativePG
+    digest: 4d31f40c1f693c03b7ecf177375802d1a441de8468e3c182235fe167dc2f9e51
+    name: home-postgres-ha
+    type: application
+    urls:
+    - https://JonnyDeates.github.io/postgres-helm-ha/home-postgres-ha-0.3.3.tgz
+    version: 0.3.3
+  - apiVersion: v2
+    appVersion: "16.1"
+    created: "2026-03-17T18:55:20.050430969Z"
     description: A Helm chart for a High Availability PostgreSQL Cluster using CloudNativePG
     digest: fdbe82f7d5b0eec255bdb6561bbb0873a82dade210a932b88b9d8796f2243be6
     name: home-postgres-ha
@@ -13,17 +23,7 @@ entries:
     version: 0.3.2
   - apiVersion: v2
     appVersion: "16.1"
-    created: "2026-03-17T18:30:11.42024973Z"
-    description: A Helm chart for a High Availability PostgreSQL Cluster using CloudNativePG
-    digest: fdbe82f7d5b0eec255bdb6561bbb0873a82dade210a932b88b9d8796f2243be6
-    name: home-postgres-ha
-    type: application
-    urls:
-    - https://JonnyDeates.github.io/postgres-helm-ha/.helm-releases/home-postgres-ha-0.3.2.tgz
-    version: 0.3.2
-  - apiVersion: v2
-    appVersion: "16.1"
-    created: "2026-03-17T18:30:11.419681056Z"
+    created: "2026-03-17T18:55:20.050187174Z"
     description: A Helm chart for a High Availability PostgreSQL Cluster using CloudNativePG
     digest: 1996ff8e9022dc4eea17422fe05bb59465ccba45da3b9bd017cb1d6016f6abf9
     name: home-postgres-ha
@@ -31,4 +31,4 @@ entries:
     urls:
     - https://JonnyDeates.github.io/postgres-helm-ha/home-postgres-ha-0.3.0.tgz
     version: 0.3.0
-generated: "2026-03-17T18:30:11.419199424Z"
+generated: "2026-03-17T18:55:20.049790653Z"
